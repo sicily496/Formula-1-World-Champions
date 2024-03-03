@@ -140,10 +140,18 @@
         resetLegendText(lapsSvg, yearLegend);
     }
 
-    onMount(() => {
+    onMount(async () => {
         const margin = { top: 10, right: 30, bottom: 40, left: 60 },
             widthLapsChart = width - margin.left - margin.right,
             heightLapsChart = height * 0.75 - margin.top - margin.bottom;
+        
+        const year_csv = await fetch('dataset.csv');
+        const year_txt = await year_csv.text();
+        year_data =  d3.csvParse(year_txt, d3.autoType);
+
+        const lap_json = await fetch('laps_data.json');
+        const lap_data = await lap_json.json();
+
 
         lapsSvg = select("#laps_dataviz")
             .append("svg")
@@ -152,10 +160,10 @@
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        d3.json("src/data/laps_data.json").then(function (loadedLapsData) {
+        lap_data.then(function (loadedLapsData) {
             lapsData = loadedLapsData;
             console.log(lapsData);
-            d3.csv("src/data/dataset.csv").then(function (loadedData) {
+            year_data.then(function (loadedData) {
                 data = loadedData;
                 // Populate the rounds dropdown based on the selected year
                 const roundDropdown = select("#round_dropdown");

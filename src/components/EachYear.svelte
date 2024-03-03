@@ -99,10 +99,13 @@
   }
 
 
-  onMount(() => {
+  onMount(async () => {
     const margin = { top: 10, right: 30, bottom: 30, left: 60 },
     widthPtsChart = width - margin.left - margin.right,
     heightPtsChart = height * 0.75 - margin.top - margin.bottom;
+    const year_csv = await fetch('dataset.csv');
+    const year_txt = await year_csv.text();
+    year_data =  d3.csvParse(year_txt, d3.autoType);
 
     svg = select("#year_dataviz")
       .append("svg")
@@ -111,7 +114,7 @@
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    d3.csv("src/data/dataset.csv").then(function (loadedData) {
+    year_data.then(function (loadedData) {
       data = loadedData;
 
       // Populate the year dropdown
