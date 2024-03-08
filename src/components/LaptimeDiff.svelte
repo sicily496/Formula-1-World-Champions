@@ -140,18 +140,10 @@
         resetLegendText(lapsSvg, yearLegend);
     }
 
-    onMount(async () => {
-        const margin = { top: 10, right: 30, bottom: 40, left: 60 },
+    onMount(() => {
+        const margin = { top: 50, right: 30, bottom: 10, left: 60 },
             widthLapsChart = width - margin.left - margin.right,
             heightLapsChart = height * 0.75 - margin.top - margin.bottom;
-        
-        const year_csv = await fetch('dataset.csv');
-        const year_txt = await year_csv.text();
-        year_data =  d3.csvParse(year_txt, d3.autoType);
-
-        const lap_json = await fetch('laps_data.json');
-        const lap_data = await lap_json.json();
-
 
         lapsSvg = select("#laps_dataviz")
             .append("svg")
@@ -160,10 +152,9 @@
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        lap_data.then(function (loadedLapsData) {
+        d3.json("src/data/laps_data.json").then(function (loadedLapsData) {
             lapsData = loadedLapsData;
-            console.log(lapsData);
-            year_data.then(function (loadedData) {
+            d3.csv("src/data/dataset.csv").then(function (loadedData) {
                 data = loadedData;
                 // Populate the rounds dropdown based on the selected year
                 const roundDropdown = select("#round_dropdown");
@@ -255,20 +246,20 @@
                         (lap) => +lap.lap_time,
                     ),
                 ])
-                .range([heightLapsChart, 0]);
+                .range([0, heightLapsChart]);
 
             // Laptimes Per Race x-axis
             lapsSvg
                 .append("g")
                 .attr("class", "x-axis")
-                .attr("transform", `translate(0, ${heightLapsChart})`)
-                .call(d3.axisBottom(lapsX).ticks(10));
+                .attr("transform", `translate(0, ${0})`)
+                .call(d3.axisTop(lapsX).ticks(10));
             // x-axis label
             lapsSvg
                 .append("text")
                 .attr("class", "x-axis-label")
                 .attr("x", widthLapsChart / 2)
-                .attr("y", heightLapsChart + margin.bottom)
+                .attr("y",  0 - 25)
                 .attr("text-anchor", "middle")
                 .text("Lap Number");
             // Laptimes Per Race y-axis
@@ -285,13 +276,13 @@
                 .attr("x", -heightLapsChart / 2)
                 .attr("dy", "1em")
                 .attr("text-anchor", "middle")
-                .text("Lap Time");
+                .text("Laptime Difference");
 
             // Add legend for years
             yearLegend = lapsSvg
                 .append("g")
                 .attr("class", "year-legend")
-                .attr("transform", `translate(${0},${heightLapsChart + 50})`);
+                .attr("transform", `translate(${0 + 20},${heightLapsChart + 10})`);
             // Obtain corresponding color
             const color = commonColorScale.domain(
                 Object.keys(
@@ -381,8 +372,24 @@
                         return null;
                     }
                 })
+                // Drawing animation
+                .attr("stroke-dasharray", function() {
+                const length = this.getTotalLength();
+                return `${length} ${length}`;
+                })
+                .attr("stroke-dashoffset", function() {
+                return this.getTotalLength();
+                })
+                .transition()
+                .duration(1000)
+                .attr("stroke-dashoffset", 0)
+                .on("end", function() {
+                // Apply event listeners after the transition
+                d3.select(this)
                 .on("mouseover", handleLapsLineMouseOver)
                 .on("mouseout", () => handleLineMouseOut(yearLegend));
+                });
+                
         }
     });
 </script>
