@@ -1,7 +1,7 @@
 <script>
   import Scroller from "@sveltejs/svelte-scroller";
   import EachYear from "./EachYear.svelte";
-  import LaptimeDiff from "LaptimeDiff.svelte";
+  import LaptimeDiff from "/LaptimeDiff.svelte";
   import Silverstone from "./Silverstone.svelte";
   import DriverCareer from "./DriverCareer.svelte";
   import DriverWin from "./DriverWinningYear.svelte";
