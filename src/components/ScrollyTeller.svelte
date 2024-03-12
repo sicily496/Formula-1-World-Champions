@@ -1,11 +1,11 @@
 <script>
   import Scroller from "@sveltejs/svelte-scroller";
-  import EachYear from "./EachYear.svelte";
-  import LaptimeDiff from "./LaptimeDiff.svelte";
-  import Silverstone from "./Silverstone.svelte";
-  import DriverCareer from "./DriverCareer.svelte";
-  import DriverWin from "./DriverWinningYear.svelte";
-  import DriverDom from "./DriverDominant.svelte";
+  import EachYear from "EachYear.svelte";
+  import LaptimeDiff from "LaptimeDiff.svelte";
+  import Silverstone from "Silverstone.svelte";
+  import DriverCareer from "DriverCareer.svelte";
+  import DriverWin from "DriverWinningYear.svelte";
+  import DriverDom from "DriverDominant.svelte";
   let count, index, offset, progress;
   let width, height;
 </script>
